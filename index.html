@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il mio canto libero</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="image-container">
+            <img src="foto.jpg" alt="Il mio canto libero">
+        </div>
+        <div class="info">
+            <h1>Il mio canto libero</h1>
+            <p> Ti amo.</p>
+        </div>
+        <div class="player">
+            <div class="controls">
+                <!-- Pulsante Precedente -->
+                <button class="control-button">
+                    <i class="fa fa-backward"></i>
+                </button>
+                <!-- Pulsante Play/Pausa -->
+                <button class="play-pause">
+                    <i class="fa fa-play"></i> <!-- L'icona cambia con JavaScript -->
+                </button>
+                <!-- Pulsante Successivo -->
+                <button class="control-button">
+                    <i class="fa fa-forward"></i>
+                </button>
+            </div>
+            
+            <!-- Barra di avanzamento -->
+            <div class="progress-container">
+                <span class="current-time">0:00</span> <!-- Tempo corrente -->
+                <input type="range" id="progressBar" value="0" min="0" max="100" class="progress">
+                <span class="total-time">0:00</span> <!-- Tempo totale -->
+            </div>
+        </div>
+        
+        <audio id="audioPlayer">
+            <source src="audio.mp3" type="audio/mpeg">
+            Il tuo browser non supporta l'audio.
+        </audio>        
+        
+    </div>
+    
+    <script>
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playPauseBtn = document.querySelector('.play-pause i');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeElem = document.querySelector('.current-time');
+        const totalTimeElem = document.querySelector('.total-time');
+
+        // Riproduci o metti in pausa
+        document.querySelector('.play-pause').addEventListener('click', function() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseBtn.classList.remove('fa-play');
+                playPauseBtn.classList.add('fa-pause');
+            } else {
+                audioPlayer.pause();
+                playPauseBtn.classList.remove('fa-pause');
+                playPauseBtn.classList.add('fa-play');
+            }
+        });
+
+        // Aggiorna il tempo totale del brano
+        audioPlayer.addEventListener('loadedmetadata', function() {
+            totalTimeElem.textContent = formatTime(audioPlayer.duration);
+        });
+
+        // Aggiorna la barra di avanzamento e il tempo corrente durante la riproduzione
+        audioPlayer.addEventListener('timeupdate', function() {
+            const currentTime = audioPlayer.currentTime;
+            const duration = audioPlayer.duration;
+            progressBar.value = (currentTime / duration) * 100;
+            currentTimeElem.textContent = formatTime(currentTime);
+        });
+
+        // Modifica il tempo del brano trascinando la barra di avanzamento
+        progressBar.addEventListener('input', function() {
+            const duration = audioPlayer.duration;
+            const seekTime = (progressBar.value / 100) * duration;
+            audioPlayer.currentTime = seekTime;
+        });
+
+        // Formatta il tempo in minuti e secondi
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+    </script>
+    
+</body>
+</html>
